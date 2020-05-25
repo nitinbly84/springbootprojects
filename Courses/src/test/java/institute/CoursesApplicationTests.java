@@ -1,13 +1,16 @@
 package institute;
 
+import static org.junit.Assert.*;
+
 import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class CoursesApplicationTests {
+public class CoursesApplicationTests {
 
 	@Test
-	void contextLoads() {
+	public void contextLoads() {
+		assertTrue(true);
 	}
 
 }
