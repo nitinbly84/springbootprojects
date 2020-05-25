@@ -4,10 +4,17 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 @Entity
+@ApiModel(description="Details about the individual Topic")
 public class Topic {
 	
 	@Id
+	@ApiModelProperty(value="Unique id of a topic", name="TopicID",
+	notes="While submitting a Topic to the system for the addition, you can give any id. System will ignore that id while adding it to the system."
+			+ "But give the correct id while searching for it in the system or using it for other purposes in the system.")
 	private String id;
 	@Column(nullable = false)
 	private String name;

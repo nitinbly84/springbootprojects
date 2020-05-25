@@ -14,23 +14,34 @@ import com.nitinagrawal.entities.Course;
 import com.nitinagrawal.entities.Topic;
 import com.nitinagrawal.services.TopicService;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
 @RestController
 public class TopicController {
 
 	@Autowired
 	private TopicService topicService;
 	
-	@RequestMapping("/topics")
+	@RequestMapping(method=RequestMethod.GET, value="/topics")
+	// Check the options available in below annotation, to provide
+	// the relevant information in the documentation.
+	@ApiOperation(value="Get all topics.",
+	              notes="Fetches all the topics present in the system.",
+	              responseContainer="Set of Topic.class")//We can't use response here as it is a container & Swagger will lose the information about the type of elements in it.
 	public Set<Topic> getAllTopics() {
 		return topicService.getAllTopics();
 	}
 	
-	@RequestMapping("/topics/{id}")
-	public Topic getTopic(@PathVariable String id) {
+	@RequestMapping(method=RequestMethod.GET, value="/topics/{id}")
+	@ApiOperation(value="Get the Topic details.",
+			      notes="Get the details of the topic having given TopicID.",
+			      response=Topic.class) 
+	public Topic getTopic(@ApiParam(name="Topic ID", value="Topic ID of the topic for which you need details.") @PathVariable String id) {
 		return topicService.getTopic(id);
 	}
 	
-	@RequestMapping("/topics/{topicId}/courses")
+	@RequestMapping(method=RequestMethod.GET, value="/topics/{topicId}/courses")
 	public List<Course> getCoursesForTopic(@PathVariable("topicId") String id) {
 		return topicService.getCoursesForTopic(id);
 	}
