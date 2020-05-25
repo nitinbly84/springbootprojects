@@ -22,6 +22,7 @@ import springfox.documentation.service.VendorExtension;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 
+// localhost:8080/swagger-ui.html
 @ComponentScan({"com.nitinagrawal.repositories", "com.nitinagrawal.utilities", "com.nitinagrawal.services", "com.nitinagrawal.controllers", "com.nitinagrawal.swagger"})
 @EntityScan("com.nitinagrawal.entities")
 @SpringBootApplication
