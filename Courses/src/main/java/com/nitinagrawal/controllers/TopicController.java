@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nitinagrawal.entities.Course;
@@ -23,7 +24,7 @@ public class TopicController {
 	@Autowired
 	private TopicService topicService;
 	
-	@RequestMapping(method=RequestMethod.GET, value="/topics")
+	@RequestMapping(method=RequestMethod.GET, value="/topics", produces="application/json")
 	// Check the options available in below annotation, to provide
 	// the relevant information in the documentation.
 	@ApiOperation(value="Get all topics.",
@@ -33,7 +34,8 @@ public class TopicController {
 		return topicService.getAllTopics();
 	}
 	
-	@RequestMapping(method=RequestMethod.GET, value="/topics/{id}")
+	@RequestMapping(method=RequestMethod.GET, value="/topics/{id}", produces="application/json")
+	@ResponseBody
 	@ApiOperation(value="Get the Topic details.",
 			      notes="Get the details of the topic having given TopicID.",
 			      response=Topic.class) 
@@ -51,8 +53,8 @@ public class TopicController {
 		return topicService.addTopic(topic);
 	}
 	
-	@RequestMapping(method=RequestMethod.PUT, value="/topics/{topicId}")
-	public String updateTopic(@PathVariable String topicId, @RequestBody Topic topic) {
+	@RequestMapping(method=RequestMethod.PUT, value="/topics/{topicId}", consumes="application/json")
+	public String updateTopic(@PathVariable String topicId, @RequestBody(required=true) Topic topic) {
 		if(topic.getId().equalsIgnoreCase(topicId) && topicService.updateTopic(topic))
 			return "Success";
 		return "Failed!!! Check the data again";
