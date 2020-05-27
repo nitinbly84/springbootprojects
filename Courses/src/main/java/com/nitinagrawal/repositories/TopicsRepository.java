@@ -55,18 +55,19 @@ public class TopicsRepository {
 		return topicCourseMapper.delTopicFromMap(delTopic);
 	}
 	
-	public boolean updateTopic(Topic updatedTopic) {
+	public Topic updateTopic(Topic updatedTopic) {
 		if(updatedTopic == null)
-			return false;
+			return null;
 		Topic existingTopic = topics.stream()
 									.filter(topic -> topic.getId().equalsIgnoreCase(updatedTopic.getId()))
 									.findFirst()
 									.orElse(getEmptyTopic());
 		if(existingTopic == null || existingTopic.getId() == null)
-			return false;
-		topics.remove(existingTopic);
+			return existingTopic;
 		Topic newTopic = addTopic(updatedTopic);
-		return topicCourseMapper.replaceTopic(existingTopic.getId(), newTopic.getId());
+		topicCourseMapper.replaceTopic(existingTopic.getId(), newTopic.getId());
+		topics.remove(existingTopic);
+		return newTopic;
 	}
 	
 	public static Topic getEmptyTopic() {

@@ -25,8 +25,10 @@ public class TopicCourseMapper {
 	private CoursesRepository coursesRepository;
 	
 	public TopicCourseMapper() {
-		courses = new CoursesRepository().getAllCourses();
-		topics = new TopicsRepository().getAllTopics();
+		topicsRepository = new TopicsRepository();
+		coursesRepository = new CoursesRepository();
+		courses = coursesRepository.getAllCourses();
+		topics = topicsRepository.getAllTopics();
 		topicCourses = Database.getTopicsCourse();
 		courseTopics = Database.getCourseTopics();
 	}

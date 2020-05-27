@@ -35,7 +35,7 @@ public class TopicService {
 		return topicsRepository.addTopic(topic);
 	}
 	
-	public boolean updateTopic(Topic topic) {
+	public Topic updateTopic(Topic topic) {
 		return topicsRepository.updateTopic(topic);
 	}
 	

@@ -4,7 +4,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,12 +25,13 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 @RestController
+//@RequestMapping("/topic") // Can use to differentiate topic related URLs.
 public class TopicController {
 
 	@Autowired
 	private TopicService topicService;
 	
-	@RequestMapping(method=RequestMethod.GET, value="/topics", produces="application/json")
+	@GetMapping(value="/topics", produces="application/json")
 	// Check the options available in below annotation, to provide
 	// the relevant information in the documentation.
 	@ApiOperation(value="Get all topics.",
@@ -34,7 +41,7 @@ public class TopicController {
 		return topicService.getAllTopics();
 	}
 	
-	@RequestMapping(method=RequestMethod.GET, value="/topics/{id}", produces="application/json")
+	@GetMapping(value="/topics/{id}", produces="application/json")
 	@ResponseBody
 	@ApiOperation(value="Get the Topic details.",
 			      notes="Get the details of the topic having given TopicID.",
@@ -43,29 +50,35 @@ public class TopicController {
 		return topicService.getTopic(id);
 	}
 	
-	@RequestMapping(method=RequestMethod.GET, value="/topics/{topicId}/courses")
+	@GetMapping(value="/topics/{topicId}/courses")
 	public List<Course> getCoursesForTopic(@PathVariable("topicId") String id) {
 		return topicService.getCoursesForTopic(id);
 	}
 	
-	@RequestMapping(method=RequestMethod.POST, value="/topics")
+	@PostMapping(value="/topics")
 	public Topic addTopic(@RequestBody Topic topic) {
 		return topicService.addTopic(topic);
 	}
 	
 	@RequestMapping(method=RequestMethod.PUT, value="/topics/{topicId}", consumes="application/json")
-	public String updateTopic(@PathVariable String topicId, @RequestBody(required=true) Topic topic) {
-		if(topic.getId().equalsIgnoreCase(topicId) && topicService.updateTopic(topic))
-			return "Success";
-		return "Failed!!! Check the data again";
+	public ResponseEntity<Topic> updateTopic(@PathVariable String topicId, @RequestBody(required=true) Topic topic) {
+		Topic updateTopic = null;
+		ResponseEntity<Topic> response;
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		if(topic.getId().equalsIgnoreCase(topicId)) {
+			updateTopic = topicService.updateTopic(topic);
+			status = HttpStatus.OK;
+		}
+		response = new ResponseEntity<Topic>(updateTopic, status);
+		return response;
 	}
 	
-	@RequestMapping(method=RequestMethod.PUT, value="/topics/{topicId}/clear")
+	@PutMapping(value="/topics/{topicId}/clear")
 	public boolean clearTopic(@PathVariable String topicId) {
 		return topicService.clearTopic(topicId);
 	}
 	
-	@RequestMapping(method=RequestMethod.DELETE, value="/topics/{topicId}")
+	@DeleteMapping(value="/topics/{topicId}")
 	public boolean deleteTopic(@PathVariable("topicId") String id) {
 		return topicService.deleteTopic(id);
 	}
