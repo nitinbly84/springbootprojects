@@ -15,7 +15,7 @@ import com.nitinagrawal.utilities.TopicsGenerator;
 
 // localhost:8080/swagger-ui.html
 @ComponentScan({"com.nitinagrawal.repositories", "com.nitinagrawal.utilities", "com.nitinagrawal.services",
-	            "com.nitinagrawal.controllers", "com.nitinagrawal.swagger", "com.nitinagrawal.security",
+	            "com.nitinagrawal.controllers", "com.nitinagrawal.mail",  "com.nitinagrawal.swagger", "com.nitinagrawal.security",
 	            "com.nitinagrawal.healthEndPoints"})
 @EntityScan("com.nitinagrawal.entities")
 @SpringBootApplication
@@ -30,6 +30,7 @@ public class CoursesApplication {
 	
 	public static void main(String[] args) {
 		System.out.println("Spring version being used in Application......."+SpringVersion.getVersion());
+		System.out.println("Profile active currently : " + System.getenv("SPRING_PROFILES_ACTIVE"));
 		SpringApplication.run(CoursesApplication.class, args);
 	}
 	

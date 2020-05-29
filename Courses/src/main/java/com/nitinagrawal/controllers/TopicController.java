@@ -37,8 +37,11 @@ public class TopicController {
 	@ApiOperation(value="Get all topics.",
 	              notes="Fetches all the topics present in the system.",
 	              responseContainer="Set of Topic.class")//We can't use response here as it is a container & Swagger will lose the information about the type of elements in it.
-	public Set<Topic> getAllTopics() {
-		return topicService.getAllTopics();
+	public ResponseEntity<Set<Topic>> getAllTopics() {
+		ResponseEntity<Set<Topic>> response;
+		HttpStatus status = HttpStatus.OK;
+		response = new ResponseEntity<Set<Topic>>(topicService.getAllTopics(), status);
+		return response;
 	}
 	
 	@GetMapping(value="/topics/{id}", produces="application/json")

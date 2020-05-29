@@ -10,9 +10,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 public class SecConfig extends WebSecurityConfigurerAdapter {
 
 	public void configure(HttpSecurity http) throws Exception {
-//		http.authorizeRequests()
-//		.antMatchers("/topics/**").hasRole("ACTUATOR")
-//		.anyRequest().permitAll();
 		 http.csrf().disable()
 			        .authorizeRequests()
 			        .requestMatchers(EndpointRequest.to(HealthEndpoint.class))
