@@ -3,8 +3,6 @@ package com.nitinagrawal.utilities;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
 
 import org.springframework.stereotype.Component;
 

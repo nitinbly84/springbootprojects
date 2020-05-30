@@ -9,9 +9,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class InterceptorAppConfig implements WebMvcConfigurer {
 	   @Autowired
 	   TopicServiceInterceptor topicServiceInterceptor;
+	   @Autowired
+	   CourseServiceInterceptor courseServiceInterceptor;
 
 	   @Override
 	   public void addInterceptors(InterceptorRegistry registry) {
 	      registry.addInterceptor(topicServiceInterceptor);
+	      registry.addInterceptor(courseServiceInterceptor);
 	   }
 	}
