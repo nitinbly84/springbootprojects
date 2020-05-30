@@ -16,7 +16,8 @@ public class SecConfig extends WebSecurityConfigurerAdapter {
 			        .permitAll()
 			        .requestMatchers(EndpointRequest.toAnyEndpoint())
 			        .authenticated()
-			        .anyRequest().authenticated()
+			        .anyRequest()
+			        .authenticated()
 			        .and()
 			        .httpBasic();
 	}
