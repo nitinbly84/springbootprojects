@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.VendorExtension;
@@ -13,23 +16,37 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-@Service
+@Configuration
 @EnableSwagger2
-public class SwaggerEnabler {
+public class SwaggerEnabler implements WebMvcConfigurer {
+
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+
+		registry
+				.addResourceHandler("swagger-ui.html")
+				.addResourceLocations("classpath:/META-INF/resources/");
+
+		registry
+				.addResourceHandler("/webjars/**")
+				.addResourceLocations("classpath:/META-INF/resources/webjars/");
+	}
+
 	@Bean
 	public Docket productApi() {
 		return new Docket(DocumentationType.SWAGGER_2)//.protocols(Collections.singleton("https"))
-				//.host("/locahost:9090")
-				.select()
-				//.paths(PathSelectors.ant("/topics")) //One can use this way also to document
-				//only specific APIs based on the URL
-				// This way it will document every API under this base package. Choose either
-				// above method or below method or both to let Swagger document about your APIs
-				// only, else it will document Spring specific APIs also & that will make your
-				// document a messy one. Its a builder pattern.
-				.apis(RequestHandlerSelectors.basePackage("com.nitinagrawal"))
-				.build()
-				.apiInfo(appDetails());
+													  //.host("/locahost:8080")
+													  .select()
+													  //.paths(PathSelectors.ant("/topics")) //One can use this way also to document
+													  //only specific APIs based on the URL
+													  // This way it will document every API under this base package. Choose either
+													  // above method or below method or both to let Swagger document about your APIs
+													  // only, else it will document Spring specific APIs also & that will make your
+													  // document a messy one. Its a builder pattern.
+													  .apis(RequestHandlerSelectors.basePackage("com.nitinagrawal"))
+													  .paths(PathSelectors.any())
+													  .build()
+													  .apiInfo(appDetails());
 	}
 
 	private static ApiInfo appDetails() {

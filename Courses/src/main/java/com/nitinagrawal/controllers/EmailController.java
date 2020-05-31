@@ -1,10 +1,11 @@
 package com.nitinagrawal.controllers;
 
+import static java.util.stream.Collectors.toList;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import static java.util.stream.Collectors.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ public class EmailController {
 
 	@Autowired
 	private EmailService emailService;
+	
 	private File file;
 	//@Autowired
 	//EmailGenerator emailGenerator;
@@ -35,7 +37,8 @@ public class EmailController {
 		List<String> mailTo = emailTo.orElse(new ArrayList<>());
 		List<String> failed = new ArrayList<>();
 		if(mailTo.isEmpty()) {
-			return new ResponseEntity<>("To address is not given to send the email to. Please give this query parameter like - /sendemail?to=email.com or give comma(,) separated list of email ids."
+			return new ResponseEntity<>("To address is not given to send the email to. "
+					+ "Please give this query parameter like - /sendemail?to=email.com or give comma(,) separated list of email ids."
 					, HttpStatus.BAD_REQUEST);
 		}
 
@@ -47,19 +50,19 @@ public class EmailController {
 		Mail mail = EmailGenerator.generateEmail(mailTo, message, file);
 		try {
 			failed = mailTo.stream()
-					.filter(mailAddress -> !emailService.sendEmail(mailAddress, mail))
-					.collect(toList());
+						   .filter(mailAddress -> !emailService.sendEmail(mailAddress, mail))
+						   .collect(toList());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		if(file != null)
+			System.out.println("File Deleted : " + file.delete() + "------------------");
 		if(failed.isEmpty())
 			return new ResponseEntity<>("Email sent successfully.", HttpStatus.OK);
 		if(failed.size() < mailTo.size()) {
 			String list = failed.toString().substring(1, failed.toString().length()-1);
 			return new ResponseEntity<>("Email sent failed for " + list + " Check the email addresses & Try again!", HttpStatus.PARTIAL_CONTENT);
 		}
-		if(file != null)
-			file.delete();
 		return new ResponseEntity<>("Email send failed. Try again", HttpStatus.NETWORK_AUTHENTICATION_REQUIRED);
 	}
 }

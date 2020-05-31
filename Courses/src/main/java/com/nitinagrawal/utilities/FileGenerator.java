@@ -16,10 +16,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 @Component
 public class FileGenerator {
+	
+	private String dir = "D:/CourseAppGeneratedFiles/";
 
 	public String createFile(Object data) {
 		ObjectMapper mapper = new ObjectMapper();
-		String dir = "D:/CourseAppGeneratedFiles/";
 		String time = java.time.LocalDateTime.now().toString()
 												   .replace("-", "_")
 												   .replace(":", "_")
