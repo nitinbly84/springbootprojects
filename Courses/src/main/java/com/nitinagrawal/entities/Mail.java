@@ -8,8 +8,10 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import org.springframework.hateoas.RepresentationModel;
+
 @Entity
-public class Mail {
+public class Mail extends RepresentationModel<Mail> {
 
 	@Column(nullable = false)
 	@ElementCollection

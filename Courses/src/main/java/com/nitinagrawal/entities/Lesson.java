@@ -3,8 +3,10 @@ package com.nitinagrawal.entities;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import org.springframework.hateoas.RepresentationModel;
+
 @Entity
-public class Lesson {
+public class Lesson extends RepresentationModel<Lesson> {
 	
 	@Id
 	private String id;

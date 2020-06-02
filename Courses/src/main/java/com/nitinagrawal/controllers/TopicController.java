@@ -3,8 +3,11 @@ package com.nitinagrawal.controllers;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.HandlerMapping;
 
 import com.nitinagrawal.entities.Course;
 import com.nitinagrawal.entities.Topic;
@@ -32,39 +36,61 @@ public class TopicController {
 
 	@Autowired
 	private TopicService topicService;
-	
+
 	@GetMapping(value="/topics", produces="application/json")
 	// Check the options available in below annotation, to provide
 	// the relevant information in the documentation.
 	@ApiOperation(value="Get all topics.",
-	              notes="Fetches all the topics present in the system.",
-	              responseContainer="Set of Topic.class")//We can't use response here as it is a container & Swagger will lose the information about the type of elements in it.
-	public ResponseEntity<Set<Topic>> getAllTopics() {
+				  notes="Fetches all the topics present in the system.",
+				  responseContainer="Set of Topic.class")
+	//We can't use response here as it is a container & Swagger will lose the information about the type of elements in it.
+	public ResponseEntity<Set<Topic>> getAllTopics(HttpServletRequest request) {
+		String pattern = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("email : ", LinkCreator.getSelfMailLink(this.getClass(), pattern).toString());
 		ResponseEntity<Set<Topic>> response;
 		HttpStatus status = HttpStatus.OK;
-		response = new ResponseEntity<Set<Topic>>(topicService.getAllTopics(), status);
-		return response;
+		Set<Topic> allTopics = topicService.getAllTopics();
+		allTopics.forEach(topic -> {
+			if(!topic.hasLink("self"))
+					topic.add(LinkCreator.getSelfLink(this.getClass(), pattern, topic.getId()));
+		});
+		//		response = new ResponseEntity<Set<Topic>>(allTopics, status);
+		response = ResponseEntity.status(status)
+								 .headers(headers)
+								 .body(allTopics);
+				return response;
 	}
-	
+
 	@GetMapping(value="/topics/{id}", produces="application/json")
 	@ResponseBody
 	@ApiOperation(value="Get the Topic details.",
-			      notes="Get the details of the topic having given TopicID.",
-			      response=Topic.class) 
+				  notes="Get the details of the topic having given TopicID.",
+				  response=Topic.class) 
 	public Topic getTopic(@ApiParam(name="Topic ID", value="Topic ID of the topic for which you need details.") @PathVariable String id) {
-		return topicService.getTopic(id);
+		Topic topic = topicService.getTopic(id);
+		if(!topic.hasLink("e-mail"))
+			topic.add(LinkCreator.getSelfMailLink(this.getClass(), "topics", id));
+		if(!topic.hasLink("courses"))
+			topic.add(LinkCreator.getNextLink(this.getClass(), "topics", id, "courses"));
+		return topic;
 	}
-	
+
 	@GetMapping(value="/topics/{topicId}/courses")
 	public List<Course> getCoursesForTopic(@PathVariable("topicId") String id) {
-		return topicService.getCoursesForTopic(id);
+		List<Course> coursesForTopic = topicService.getCoursesForTopic(id);
+		coursesForTopic.forEach(course -> {
+			if(!course.hasLink("self"))
+				course.add(LinkCreator.getSelfLink(CourseController.class, "courses", course.getId()));
+		});
+		return coursesForTopic;
 	}
-	
+
 	@PostMapping(value="/topics")
 	public Topic addTopic(@RequestBody Topic topic) {
 		return topicService.addTopic(topic);
 	}
-	
+
 	@RequestMapping(method=RequestMethod.PUT, value="/topics/{topicId}", consumes="application/json")
 	public ResponseEntity<Topic> updateTopic(@PathVariable String topicId, @RequestBody(required=true) Topic topic) {
 		Topic updateTopic = null;
@@ -77,22 +103,22 @@ public class TopicController {
 		response = new ResponseEntity<Topic>(updateTopic, status);
 		return response;
 	}
-	
+
 	@PutMapping(value="/topics/{topicId}/clear")
 	public boolean clearTopic(@PathVariable String topicId) {
 		return topicService.clearTopic(topicId);
 	}
-	
+
 	@DeleteMapping(value="/topics/{topicId}")
 	public boolean deleteTopic(@PathVariable("topicId") String id) {
 		return topicService.deleteTopic(id);
 	}
-	
+
 	@RequestMapping(method=RequestMethod.PUT, value="/topics/{topicId}/courses/{courseId}")
 	public boolean addCourseToTopic(@PathVariable String topicId, @PathVariable String courseId) {
 		return topicService.addCourseToTopic(topicId, courseId);
 	}
-	
+
 	@RequestMapping(method=RequestMethod.DELETE, value="/topics/{topicId}/courses/{courseId}")
 	public boolean deleteCourseFromTopic(@PathVariable String courseId, @PathVariable String topicId) {
 		return topicService.deleteCourseFromTopic(courseId, topicId);

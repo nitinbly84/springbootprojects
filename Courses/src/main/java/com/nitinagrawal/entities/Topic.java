@@ -4,12 +4,14 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @Entity
 @ApiModel(description="Details about the individual Topic")
-public class Topic {
+public class Topic extends RepresentationModel<Topic> {
 	
 	@Id
 	@ApiModelProperty(value="Unique id of a topic", name="TopicID",

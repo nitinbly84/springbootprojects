@@ -3,13 +3,19 @@ package com.nitinagrawal.controllers;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.HandlerMapping;
 
 import com.nitinagrawal.entities.Course;
 import com.nitinagrawal.entities.Lesson;
@@ -24,13 +30,32 @@ public class CourseController {
 	CourseService courseService;
 	
 	@RequestMapping("/courses")
-	public Set<Course> getAllCourses() {
-		return courseService.getAllCourses();
+	public ResponseEntity<Set<Course>> getAllCourses(HttpServletRequest request) {
+		String pattern = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("email : ", LinkCreator.getSelfMailLink(this.getClass(), pattern).toString());
+		ResponseEntity<Set<Course>> response;
+		HttpStatus status = HttpStatus.OK;
+		Set<Course> allCourses = courseService.getAllCourses();
+		allCourses.forEach(course -> {
+			if(!course.hasLink("self"))
+				course.add(LinkCreator.getSelfLink(this.getClass(), pattern, course.getId()));
+		});
+		//		response = new ResponseEntity<Set<Topic>>(allTopics, status);
+		response = ResponseEntity.status(status)
+								 .headers(headers)
+								 .body(allCourses);
+				return response;
 	}
 
 	@RequestMapping("/courses/{id}")
-	public Course getTopic(@PathVariable String id) {
-		return courseService.getCourse(id);
+	public Course getCourse(@PathVariable String id) {
+		Course course = courseService.getCourse(id);
+		if(!course.hasLink("e-mail"))
+			course.add(LinkCreator.getSelfMailLink(this.getClass(), "courses", id));
+		if(!course.hasLink("lessons"))
+			course.add(LinkCreator.getNextLink(this.getClass(), "courses", id, "lessons"));
+		return course;
 	}
 	
 	@RequestMapping("/courses/{courseId}/lessons")
