@@ -15,7 +15,7 @@ import com.nitinagrawal.utilities.TopicsGenerator;
 
 // localhost:8080/swagger-ui.html
 @ComponentScan({"com.nitinagrawal.repositories", "com.nitinagrawal.utilities", "com.nitinagrawal.services",
-	            "com.nitinagrawal.controllers", "com.nitinagrawal.mail",  "com.nitinagrawal.swagger", "com.nitinagrawal.security",
+	            "com.nitinagrawal.controllers", "com.nitinagrawal.mail",  "com.nitinagrawal.documentation", "com.nitinagrawal.security",
 	            "com.nitinagrawal.healthEndPoints", "com.nitinagrawal.throttling"})
 @EntityScan("com.nitinagrawal.entities")
 @SpringBootApplication
