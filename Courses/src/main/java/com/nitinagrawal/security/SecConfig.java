@@ -12,6 +12,9 @@ public class SecConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
+		http.authorizeRequests()
+		.antMatchers("/h2-console/**")
+		.authenticated();
 		http.csrf().disable()
 			       .authorizeRequests()
 			       .requestMatchers(EndpointRequest.to(HealthEndpoint.class))
@@ -24,6 +27,7 @@ public class SecConfig extends WebSecurityConfigurerAdapter {
 			       .authenticated()
 			       .and()
 			       .httpBasic();
+		http.headers().frameOptions().disable();
 	}
 
 	@Override

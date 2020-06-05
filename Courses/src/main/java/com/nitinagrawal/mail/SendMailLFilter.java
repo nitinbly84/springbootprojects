@@ -55,7 +55,7 @@ public class SendMailLFilter implements Filter {
 			}
 		}
 
-		System.out.println("This filter is called for every request to application....");
+		System.out.println("SendMailLFilter filter is called for every request to application....");
 
 		//call next filter in the filter chain
 		filterChain.doFilter(request, response);
